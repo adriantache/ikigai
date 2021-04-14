@@ -1,7 +1,6 @@
 package com.adriantache.ikigai.randomizer
 
 import android.os.Bundle
-import android.text.InputType.TYPE_NULL
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -23,7 +22,6 @@ class RandomizerActivity : AppCompatActivity() {
 
         viewModel.randomize()
         setupButton()
-        disableEditTexts()
     }
 
     private fun setupDataBinding() {
@@ -36,11 +34,5 @@ class RandomizerActivity : AppCompatActivity() {
         binding.randomizeBtn.setOnClickListener {
             viewModel.randomize()
         }
-    }
-
-    private fun disableEditTexts() = with(binding) {
-        loveTv.inputType = TYPE_NULL
-        goodTv.inputType = TYPE_NULL
-        worldTv.inputType = TYPE_NULL
     }
 }

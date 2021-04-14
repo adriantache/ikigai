@@ -26,10 +26,7 @@ class MainActivity : AppCompatActivity() {
         setupDataBinding()
 
         setupCurrentCategory()
-        setupAddButton()
-        setupNextCategoryButton()
-        setupDeleteAllButton()
-
+        setupButtons()
         viewModel.refreshAnswers()
     }
 
@@ -39,40 +36,28 @@ class MainActivity : AppCompatActivity() {
         binding.lifecycleOwner = this
     }
 
-    private fun setupDeleteAllButton() {
-        binding.deleteAllBtn.setOnClickListener {
-            viewModel.deleteAll()
-            clearInput()
-            viewModel.currentCategory = LOVE
-            updateUi()
-        }
-    }
-
     private fun setupCurrentCategory() {
         binding.categoryTv.text = viewModel.currentCategory.string
     }
 
-    private fun setupAddButton() {
-        binding.submitBtn.setOnClickListener {
-            viewModel.addAnswer(binding.answerEt.text.toString())
-
-            clearInput()
+    private fun setupButtons() {
+        binding.deleteAllBtn.setOnClickListener {
+            viewModel.deleteAll()
+            viewModel.currentCategory = LOVE
             updateUi()
         }
-    }
 
-    private fun updateUi() {
-        binding.categoryTv.text = viewModel.currentCategory.string
-    }
+        binding.submitBtn.setOnClickListener {
+            viewModel.addAnswer(binding.answerEt.text.toString())
+            updateUi()
+        }
 
-    private fun setupNextCategoryButton() {
         binding.nextCategoryBtn.setOnClickListener {
             val nextCategory = viewModel.currentCategory.getNext()
 
             if (nextCategory != null) {
                 viewModel.currentCategory = nextCategory
                 updateUi()
-                clearInput()
                 viewModel.refreshAnswers()
             } else {
                 navigateToRandomizer()
@@ -83,6 +68,11 @@ class MainActivity : AppCompatActivity() {
     private fun navigateToRandomizer() {
         val intent = Intent(this, RandomizerActivity::class.java)
         startActivity(intent)
+    }
+
+    private fun updateUi() {
+        binding.categoryTv.text = viewModel.currentCategory.string
+        clearInput()
     }
 
     private fun clearInput() {
