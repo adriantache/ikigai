@@ -1,31 +1,36 @@
 package com.adriantache.ikigai.main
 
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.adriantache.ikigai.data.room.AnswerRepository
 import com.adriantache.ikigai.model.AnswerEntity
+import com.adriantache.ikigai.model.Category
 import kotlinx.coroutines.launch
 
 class MainViewModel(private val repository: AnswerRepository) : ViewModel() {
 
-    val answers = MutableLiveData<List<AnswerEntity>>()
+    private val answers = MutableLiveData<List<AnswerEntity>>()
 
-    fun getAnswers() {
+    var currentCategory: Category = Category.LOVE
+
+    val answersList = answers.map { answers ->
+        answers.joinToString("\n") { it.answer }
+    }
+
+    fun refreshAnswers() {
         viewModelScope.launch {
             answers.value = repository.getAnswers()
         }
     }
 
-    fun addAnswer(answerEntity: AnswerEntity) = viewModelScope.launch {
-        repository.insert(answerEntity)
-        getAnswers()
+    fun addAnswer(input: String) = viewModelScope.launch {
+        val answer = AnswerEntity(currentCategory, input)
+        repository.insert(answer)
+        refreshAnswers()
     }
 
     fun deleteAll() = viewModelScope.launch {
         repository.deleteAll()
-        getAnswers()
+        refreshAnswers()
     }
 }
 
