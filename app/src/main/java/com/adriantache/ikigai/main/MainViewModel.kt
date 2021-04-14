@@ -13,7 +13,9 @@ class MainViewModel(private val repository: AnswerRepository) : ViewModel() {
     var currentCategory: Category = Category.LOVE
 
     val answersList = answers.map { answers ->
-        answers.joinToString("\n") { it.answer }
+        answers
+            .filter { it.category == currentCategory }
+            .joinToString("\n") { it.answer }
     }
 
     fun refreshAnswers() {

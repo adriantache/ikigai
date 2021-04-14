@@ -1,5 +1,6 @@
 package com.adriantache.ikigai.main
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -7,15 +8,17 @@ import androidx.databinding.DataBindingUtil
 import com.adriantache.ikigai.IkigaiApplication
 import com.adriantache.ikigai.R
 import com.adriantache.ikigai.databinding.ActivityMainBinding
-import com.adriantache.ikigai.model.Category
+import com.adriantache.ikigai.model.Category.Companion.getNext
+import com.adriantache.ikigai.model.Category.LOVE
+import com.adriantache.ikigai.randomizer.RandomizerActivity
 
 class MainActivity : AppCompatActivity() {
-
-    private lateinit var binding: ActivityMainBinding
 
     private val viewModel: MainViewModel by viewModels {
         WordViewModelFactory((application as IkigaiApplication).repository)
     }
+
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +43,8 @@ class MainActivity : AppCompatActivity() {
         binding.deleteAllBtn.setOnClickListener {
             viewModel.deleteAll()
             clearInput()
+            viewModel.currentCategory = LOVE
+            updateUi()
         }
     }
 
@@ -51,6 +56,7 @@ class MainActivity : AppCompatActivity() {
         binding.submitBtn.setOnClickListener {
             viewModel.addAnswer(binding.answerEt.text.toString())
 
+            clearInput()
             updateUi()
         }
     }
@@ -61,20 +67,22 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupNextCategoryButton() {
         binding.nextCategoryBtn.setOnClickListener {
-            // TODO: 14/04/2021  improve this horribleness
-            val categories = Category.values().sortedBy { it.order }
-            val maxOrder = categories.maxOf { it.order }
-            val nextOrder = if (viewModel.currentCategory.order + 1 > maxOrder) {
-                1
-            } else {
-                viewModel.currentCategory.order + 1
-            }
-            viewModel.currentCategory = categories.find { it.order == nextOrder }!!
-            updateUi()
+            val nextCategory = viewModel.currentCategory.getNext()
 
-            clearInput()
-            viewModel.refreshAnswers()
+            if (nextCategory != null) {
+                viewModel.currentCategory = nextCategory
+                updateUi()
+                clearInput()
+                viewModel.refreshAnswers()
+            } else {
+                navigateToRandomizer()
+            }
         }
+    }
+
+    private fun navigateToRandomizer() {
+        val intent = Intent(this, RandomizerActivity::class.java)
+        startActivity(intent)
     }
 
     private fun clearInput() {
