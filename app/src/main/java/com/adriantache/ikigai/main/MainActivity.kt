@@ -15,7 +15,7 @@ import com.adriantache.ikigai.randomizer.RandomizerActivity
 class MainActivity : AppCompatActivity() {
 
     private val viewModel: MainViewModel by viewModels {
-        WordViewModelFactory((application as IkigaiApplication).repository)
+        MainViewModelFactory((application as IkigaiApplication).repository)
     }
 
     private lateinit var binding: ActivityMainBinding

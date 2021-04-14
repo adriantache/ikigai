@@ -5,4 +5,8 @@
     <string name="next_icon"><![CDATA[>]]></string>
     <string name="next_category_label">Next category</string>
     <string name="delete_all">Delete all</string>
+    <string name="what_you_love">What you love</string>
+    <string name="what_youre_good_at">What you\'re good at</string>
+    <string name="what_world_needs">What the world needs</string>
+    <string name="randomize">Randomize</string>
 </resources>
