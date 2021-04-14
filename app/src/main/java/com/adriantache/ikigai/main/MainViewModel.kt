@@ -22,6 +22,11 @@ class MainViewModel(private val repository: AnswerRepository) : ViewModel() {
         repository.insert(answerEntity)
         getAnswers()
     }
+
+    fun deleteAll() = viewModelScope.launch {
+        repository.deleteAll()
+        getAnswers()
+    }
 }
 
 class WordViewModelFactory(private val repository: AnswerRepository) : ViewModelProvider.Factory {

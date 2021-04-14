@@ -6,6 +6,7 @@ import com.adriantache.ikigai.model.AnswerEntity
 
 class AnswerRepository(private val answerDao: AnswerDao) {
 
+    // TODO: 14/04/2021  migrate this to Flow
     suspend fun getAnswers(): List<AnswerEntity> {
         return answerDao.getAll().map { it.toEntity() }
     }
@@ -17,5 +18,9 @@ class AnswerRepository(private val answerDao: AnswerDao) {
         if (answers.find { it.answer == answer.answer } == null) {
             answerDao.insertAll(AnswerRoomEntity.fromEntity(answer))
         }
+    }
+
+    suspend fun deleteAll() {
+        answerDao.deleteAll()
     }
 }

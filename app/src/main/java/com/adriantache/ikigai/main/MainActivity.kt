@@ -26,9 +26,18 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         setupCurrentCategory()
         setupAddButton()
         setupNextCategoryButton()
+        setupDeleteAllButton()
 
         setupObserver()
         viewModel.getAnswers()
+    }
+
+    private fun setupDeleteAllButton() {
+        val deleteAllButton = findViewById<Button>(R.id.delete_all_btn)
+        deleteAllButton.setOnClickListener {
+            viewModel.deleteAll()
+            clearInput()
+        }
     }
 
     private fun setupObserver() {
@@ -73,9 +82,13 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
             currentCategory = categories.find { it.order == nextOrder }!!
             updateUi()
 
-            val input = findViewById<EditText>(R.id.answer_et)
-            input.text = null
+            clearInput()
             viewModel.getAnswers()
         }
+    }
+
+    private fun clearInput() {
+        val input = findViewById<EditText>(R.id.answer_et)
+        input.text = null
     }
 }
