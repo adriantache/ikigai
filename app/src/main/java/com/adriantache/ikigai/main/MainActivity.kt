@@ -4,8 +4,9 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
+import com.adriantache.ikigai.IkigaiApplication
 import com.adriantache.ikigai.R
 import com.adriantache.ikigai.model.AnswerEntity
 import com.adriantache.ikigai.model.Category
@@ -13,18 +14,30 @@ import com.adriantache.ikigai.model.Category.LOVE
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
-    private lateinit var viewModel: MainViewModel
+    private val viewModel: MainViewModel by viewModels {
+        WordViewModelFactory((application as IkigaiApplication).repository)
+    }
 
     private var currentCategory: Category = LOVE
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider.AndroidViewModelFactory(application)
-            .create(MainViewModel::class.java)
 
         setupCurrentCategory()
         setupAddButton()
         setupNextCategoryButton()
+
+        setupObserver()
+        viewModel.getAnswers()
+    }
+
+    private fun setupObserver() {
+        viewModel.answers.observe(this) { answers ->
+            val summaryTv = findViewById<TextView>(R.id.answers_tv)
+            summaryTv.text = answers
+                .filter { it.category == currentCategory }
+                .joinToString("\n") { it.answer }
+        }
     }
 
     private fun setupCurrentCategory() {
@@ -47,11 +60,6 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     private fun updateUi() {
         val categoryTv = findViewById<TextView>(R.id.category_tv)
         categoryTv.text = currentCategory.string
-
-        val summaryTv = findViewById<TextView>(R.id.answers_tv)
-        summaryTv.text = viewModel.answers
-            .filter { it.category == currentCategory }
-            .joinToString("\n") { it.answer }
     }
 
     private fun setupNextCategoryButton() {
@@ -67,6 +75,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
             val input = findViewById<EditText>(R.id.answer_et)
             input.text = null
+            viewModel.getAnswers()
         }
     }
 }
