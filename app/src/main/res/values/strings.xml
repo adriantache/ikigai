@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Ikigai</string>
+    <string name="category_placeholder">Category</string>
+    <string name="answer_input_hint">Enter your answer</string>
+    <string name="next_icon"><![CDATA[>]]></string>
+    <string name="next_category_label">Next category</string>
 </resources>
