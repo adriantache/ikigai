@@ -12,6 +12,10 @@ class AnswerRepository(private val answerDao: AnswerDao) {
 
     @WorkerThread
     suspend fun insert(answer: AnswerEntity) {
-        answerDao.insertAll(AnswerRoomEntity.fromEntity(answer))
+        val answers = getAnswers()
+
+        if (answers.find { it.answer == answer.answer } == null) {
+            answerDao.insertAll(AnswerRoomEntity.fromEntity(answer))
+        }
     }
 }
